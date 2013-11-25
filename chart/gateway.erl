@@ -40,8 +40,10 @@ recv(Socket)->
 
 send(Sockets, Data)->
 	SendData = fun(Socket)->
-
-			case gen_tcp:send(Socket, list_to_binary(Data)) of 
+			%JData = <<"{\"job\": {\"id\": \"1\"}}">>,
+			%case gen_tcp:send(Socket, list_to_binary(Data)) of 
+			FData = mochijson2:decode(Data),
+			case gen_tcp:send(Socket, mochijson2:encode(FData)) of 
 				{error, Reason} ->
 					io:format("[gateway][~p]->send data faild:~p~n",[time(), Reason]);
 				ok ->
